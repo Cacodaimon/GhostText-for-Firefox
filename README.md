@@ -1,4 +1,4 @@
 GhostText-For-Firefox
 =====================
 
-GhostText Firefox addon prototype.
+GhostText Firefox add on prototype.
