@@ -1,4 +1,4 @@
-'use strict';
+//'use strict';
 
 /**
  * GhostText for FireFox background script.

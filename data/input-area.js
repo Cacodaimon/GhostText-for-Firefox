@@ -1,12 +1,33 @@
 var GhostText;
 (function (GhostText) {
     (function (InputArea) {
+        (function (Browser) {
+            Browser[Browser["Chrome"] = 0] = "Chrome";
+            Browser[Browser["Firefox"] = 1] = "Firefox";
+        })(InputArea.Browser || (InputArea.Browser = {}));
+        var Browser = InputArea.Browser;
+    })(GhostText.InputArea || (GhostText.InputArea = {}));
+    var InputArea = GhostText.InputArea;
+})(GhostText || (GhostText = {}));
+var GhostText;
+(function (GhostText) {
+    (function (InputArea) {
         var StandardsCustomEvent = (function () {
             function StandardsCustomEvent() {
             }
             StandardsCustomEvent.get = function (eventType, data) {
-                var customEvent = CustomEvent;
-                var event = new customEvent(eventType, data);
+                //var customEvent = CustomEvent;
+                //var event = new customEvent(eventType, data);
+                //return event;
+
+
+               // var event = new window.document.defaultView.CustomEvent(eventType, data);
+                //var greeting = {"greeting" : "hello world"};
+
+                var cloned = cloneInto(data.detail, document.defaultView);
+                var event = document.createEvent('CustomEvent');
+                event.initCustomEvent(eventType, true, true, cloned);
+
                 return event;
             };
             return StandardsCustomEvent;
@@ -115,19 +136,24 @@ var GhostText;
 (function (GhostText) {
     (function (InputArea) {
         var Detector = (function () {
-            function Detector() {
+            function Detector(browser) {
                 this.onFocusCB = null;
                 this.inputAreaElements = [];
+                this.browser = browser;
             }
             Detector.prototype.detect = function (document) {
                 if (this.onFocusCB === null) {
                     throw 'On focus callback is missing!';
                 }
 
-                this.addAceElements(document);
-                this.addCodeMirrorElements(document);
-                this.addTextAreas(document);
-                this.addContentEditableElements(document);
+                try  {
+                    this.addAceElements(document);
+                    this.addCodeMirrorElements(document);
+                    this.addTextAreas(document);
+                    this.addContentEditableElements(document);
+                } catch (e) {
+                    alert(e);
+                }
 
                 if (this.inputAreaElements.length === 0) {
                     return 0;
@@ -186,7 +212,6 @@ var GhostText;
             Detector.prototype.buildAceScript = function (id) {
                 return [
                     '(function() {',
-                    'alert("injected! buildAceScript");',
                     'var offsetToPos = function(lines, offset) {',
                     'var row = 0, pos = 0;',
                     'while ( row < lines.length && pos + lines[row].length < offset) {',
@@ -194,11 +219,12 @@ var GhostText;
                     '}',
                     'return {row: row, col: offset - pos};',
                     '};',
-                    'var ghostTextAceDiv = document.querySelector("#', id, '");',
+                    'var ghostTextAceDiv = document.querySelector("#' + id + '");',
                     'var ghostTextAceEditor = ace.edit(ghostTextAceDiv);',
                     'var ghostTextAceEditorSession = ghostTextAceEditor.getSession();',
                     'var Range = ace.require("ace/range").Range;',
                     'ghostTextAceDiv.addEventListener("GhostTextServerInput", function (e) {',
+                    'console.log(e);',
                     'ghostTextAceEditorSession.setValue(e.detail.text);',
                     '});',
                     'ghostTextAceDiv.addEventListener("GhostTextDoFocus", function(e) {',
@@ -267,8 +293,7 @@ var GhostText;
             Detector.prototype.buildCodeMirrorScript = function (id) {
                 return [
                     '(function() {',
-                    'alert("injected! buildCodeMirrorScript");',
-                    'var ghostTextCodeMirrorDiv = document.querySelector("#', id, '");',
+                    'var ghostTextCodeMirrorDiv = document.querySelector("#' + id + '");',
                     'var ghostTextCodeMirrorEditor = ghostTextCodeMirrorDiv.CodeMirror;',
                     'console.log([ghostTextCodeMirrorDiv, ghostTextCodeMirrorEditor]);',
                     'ghostTextCodeMirrorDiv.addEventListener("GhostTextServerInput", function (e) {',
@@ -356,7 +381,17 @@ var GhostText;
                 script.setAttribute('type', 'text/javascript');
                 script.setAttribute('class', 'ghost-text-injected-script');
                 script.setAttribute('id', 'ghost-text-injected-script-' + id);
-                script.text = javaScript;
+                switch (this.browser) {
+                    case 0 /* Chrome */:
+                        script.innerText = javaScript;
+                        break;
+                    case 1 /* Firefox */:
+                        script.text = javaScript;
+                        break;
+                    default:
+                        throw 'Unknown browser given!';
+                }
+
                 head.appendChild(script);
             };
             return Detector;
@@ -420,7 +455,11 @@ var GhostText;
                 };
                 window.addEventListener('beforeunload', this.beforeUnloadListener);
 
-                this.customEvent = InputArea.StandardsCustomEvent.get('input', { detail: { generatedByGhostText: true } });
+                try  {
+                    this.customEvent = InputArea.StandardsCustomEvent.get('input', { detail: { generatedByGhostText: true } });
+                } catch (e) {
+                    console.log(e);
+                }
             };
 
             TextArea.prototype.unbind = function () {
@@ -485,6 +524,10 @@ var GhostText;
 
             TextArea.prototype.buildChange = function () {
                 return new InputArea.TextChange(this.getText(), this.getSelections().getAll());
+            };
+
+            TextArea.prototype.setBrowser = function (browser) {
+                this.browser = browser;
             };
 
             TextArea.prototype.highlight = function () {
@@ -604,10 +647,15 @@ var GhostText;
                     return;
                 }
 
-                this.currentText = text;
-                var details = { detail: { text: this.currentText } };
-                var gtServerInputEvent = InputArea.StandardsCustomEvent.get('GhostTextServerInput', details);
-                this.jsCodeEditorDiv.dispatchEvent(gtServerInputEvent);
+                try  {
+                    this.currentText = text;
+                    var details = {detail: { text: this.currentText }};
+                    var gtServerInputEvent = InputArea.StandardsCustomEvent.get('GhostTextServerInput', details);
+                    this.jsCodeEditorDiv.dispatchEvent(gtServerInputEvent);
+                } catch (e) {
+                    alert(e);
+                    console.log(e);
+                }
             };
 
             JSCodeEditor.prototype.getSelections = function () {
@@ -622,6 +670,10 @@ var GhostText;
 
             JSCodeEditor.prototype.buildChange = function () {
                 return new InputArea.TextChange(this.getText(), this.getSelections().getAll());
+            };
+
+            JSCodeEditor.prototype.setBrowser = function (browser) {
+                this.browser = browser;
             };
 
             JSCodeEditor.prototype.highlight = function () {
@@ -734,6 +786,10 @@ var GhostText;
 
             ContentEditable.prototype.buildChange = function () {
                 return new InputArea.TextChange(this.getText(), this.getSelections().getAll());
+            };
+
+            ContentEditable.prototype.setBrowser = function (browser) {
+                this.browser = browser;
             };
 
             ContentEditable.prototype.highlight = function () {
