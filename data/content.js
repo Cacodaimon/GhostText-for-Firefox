@@ -55,28 +55,6 @@ if (countElementsFound === 0) {
     alert('There are multiple text areas on this page. \n Click on the one you want to use.');
 }
 
-
-try {
-
-    var eventDetail = {foo: 'bar', __exposedProps__ : { foo : "r"}};
-    var e1 = new window.document.defaultView.CustomEvent("mytype", eventDetail);
-
-    document.dispatchEvent(e1);
-} catch (e) {
-    alert("window.document.defaultView.CustomEvent");
-    alert(e);
-}
-
-try {
-    var e2 = document.createEvent('CustomEvent');
-    e2.initCustomEvent("MyEvent", false, false, null, {foo: "bar"});
-
-    document.dispatchEvent(e2);
-} catch (e) {
-    alert("initCustomEvent");
-    alert(e);
-}
-
 //TODO error, onclose, messages…
 
 alert("Content script injected… 2000");

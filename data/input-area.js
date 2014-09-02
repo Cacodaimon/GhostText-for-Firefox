@@ -15,18 +15,17 @@ var GhostText;
         var StandardsCustomEvent = (function () {
             function StandardsCustomEvent() {
             }
-            StandardsCustomEvent.get = function (eventType, data) {
-                //var customEvent = CustomEvent;
-                //var event = new customEvent(eventType, data);
-                //return event;
+            StandardsCustomEvent.get = function (browser, eventType, data) {
+                if (browser == 1 /* Firefox */) {
+                    var cloned = cloneInto(data.detail, document.defaultView);
+                    var event = document.createEvent('CustomEvent');
+                    event.initCustomEvent(eventType, true, true, cloned);
 
+                    return event;
+                }
 
-               // var event = new window.document.defaultView.CustomEvent(eventType, data);
-                //var greeting = {"greeting" : "hello world"};
-
-                var cloned = cloneInto(data.detail, document.defaultView);
-                var event = document.createEvent('CustomEvent');
-                event.initCustomEvent(eventType, true, true, cloned);
+                var customEvent = CustomEvent;
+                var event = new customEvent(eventType, data);
 
                 return event;
             };
@@ -146,14 +145,10 @@ var GhostText;
                     throw 'On focus callback is missing!';
                 }
 
-                try  {
-                    this.addAceElements(document);
-                    this.addCodeMirrorElements(document);
-                    this.addTextAreas(document);
-                    this.addContentEditableElements(document);
-                } catch (e) {
-                    alert(e);
-                }
+                this.addAceElements(document);
+                this.addCodeMirrorElements(document);
+                this.addTextAreas(document);
+                this.addContentEditableElements(document);
 
                 if (this.inputAreaElements.length === 0) {
                     return 0;
@@ -177,6 +172,7 @@ var GhostText;
 
                 for (var i = 0; i < textAreas.length; i++) {
                     var inputArea = new InputArea.TextArea();
+                    inputArea.setBrowser(this.browser);
                     inputArea.bind(textAreas[i]);
                     this.inputAreaElements.push(inputArea);
                 }
@@ -187,6 +183,7 @@ var GhostText;
 
                 for (var i = 0; i < contentEditables.length; i++) {
                     var inputArea = new InputArea.ContentEditable();
+                    inputArea.setBrowser(this.browser);
                     inputArea.bind(contentEditables[i]);
                     this.inputAreaElements.push(inputArea);
                 }
@@ -204,6 +201,7 @@ var GhostText;
                     }
                     this.injectScript(document, this.buildAceScript(id), id);
                     var inputArea = new InputArea.JSCodeEditor();
+                    inputArea.setBrowser(this.browser);
                     inputArea.bind(aceEditor);
                     this.inputAreaElements.push(inputArea);
                 }
@@ -224,7 +222,6 @@ var GhostText;
                     'var ghostTextAceEditorSession = ghostTextAceEditor.getSession();',
                     'var Range = ace.require("ace/range").Range;',
                     'ghostTextAceDiv.addEventListener("GhostTextServerInput", function (e) {',
-                    'console.log(e);',
                     'ghostTextAceEditorSession.setValue(e.detail.text);',
                     '});',
                     'ghostTextAceDiv.addEventListener("GhostTextDoFocus", function(e) {',
@@ -285,6 +282,7 @@ var GhostText;
                     }
                     this.injectScript(document, this.buildCodeMirrorScript(id), id);
                     var inputArea = new InputArea.JSCodeEditor();
+                    inputArea.setBrowser(this.browser);
                     inputArea.bind(codeMirrorEditor);
                     this.inputAreaElements.push(inputArea);
                 }
@@ -455,11 +453,7 @@ var GhostText;
                 };
                 window.addEventListener('beforeunload', this.beforeUnloadListener);
 
-                try  {
-                    this.customEvent = InputArea.StandardsCustomEvent.get('input', { detail: { generatedByGhostText: true } });
-                } catch (e) {
-                    console.log(e);
-                }
+                this.customEvent = InputArea.StandardsCustomEvent.get(this.browser, 'input', { detail: { generatedByGhostText: true } });
             };
 
             TextArea.prototype.unbind = function () {
@@ -609,12 +603,12 @@ var GhostText;
             };
 
             JSCodeEditor.prototype.focus = function () {
-                var gtDoFocusEvent = InputArea.StandardsCustomEvent.get('GhostTextDoFocus', {});
+                var gtDoFocusEvent = InputArea.StandardsCustomEvent.get(this.browser, 'GhostTextDoFocus', { detail: null });
                 this.jsCodeEditorDiv.dispatchEvent(gtDoFocusEvent);
             };
 
             JSCodeEditor.prototype.blur = function () {
-                var gtDoBlurEvent = InputArea.StandardsCustomEvent.get('GhostTextDoBlur', {});
+                var gtDoBlurEvent = InputArea.StandardsCustomEvent.get(this.browser, 'GhostTextDoBlur', { detail: null });
                 this.jsCodeEditorDiv.dispatchEvent(gtDoBlurEvent);
             };
 
@@ -647,15 +641,10 @@ var GhostText;
                     return;
                 }
 
-                try  {
-                    this.currentText = text;
-                    var details = {detail: { text: this.currentText }};
-                    var gtServerInputEvent = InputArea.StandardsCustomEvent.get('GhostTextServerInput', details);
-                    this.jsCodeEditorDiv.dispatchEvent(gtServerInputEvent);
-                } catch (e) {
-                    alert(e);
-                    console.log(e);
-                }
+                this.currentText = text;
+                var details = { detail: { text: this.currentText } };
+                var gtServerInputEvent = InputArea.StandardsCustomEvent.get(this.browser, 'GhostTextServerInput', details);
+                this.jsCodeEditorDiv.dispatchEvent(gtServerInputEvent);
             };
 
             JSCodeEditor.prototype.getSelections = function () {
@@ -664,7 +653,7 @@ var GhostText;
 
             JSCodeEditor.prototype.setSelections = function (selections) {
                 var details = { detail: { selections: selections.toJSON() } };
-                var gtDoFocusEvent = InputArea.StandardsCustomEvent.get('GhostTextServerSelectionChanged', details);
+                var gtDoFocusEvent = InputArea.StandardsCustomEvent.get(this.browser, 'GhostTextServerSelectionChanged', details);
                 this.jsCodeEditorDiv.dispatchEvent(gtDoFocusEvent);
             };
 
@@ -677,12 +666,12 @@ var GhostText;
             };
 
             JSCodeEditor.prototype.highlight = function () {
-                var gtDoHighlightEvent = InputArea.StandardsCustomEvent.get('GhostTextDoHighlight', {});
+                var gtDoHighlightEvent = InputArea.StandardsCustomEvent.get(this.browser, 'GhostTextDoHighlight', { detail: null });
                 this.jsCodeEditorDiv.dispatchEvent(gtDoHighlightEvent);
             };
 
             JSCodeEditor.prototype.removeHighlight = function () {
-                var gtRemoveHighlightEvent = InputArea.StandardsCustomEvent.get('GhostTextRemoveHighlight', {});
+                var gtRemoveHighlightEvent = InputArea.StandardsCustomEvent.get(this.browser, 'GhostTextRemoveHighlight', { detail: null });
                 this.jsCodeEditorDiv.dispatchEvent(gtRemoveHighlightEvent);
             };
             return JSCodeEditor;
@@ -724,7 +713,12 @@ var GhostText;
                         that.textChangedEventCB(that, that.getText());
                     }
                 };
+
                 this.contentEditableElement.addEventListener('input', this.inputEventListener, false);
+
+                if (this.browser === 1 /* Firefox */) {
+                    this.contentEditableElement.addEventListener('DOMCharacterDataModified', this.inputEventListener, false);
+                }
 
                 this.beforeUnloadListener = function () {
                     if (that.unloadEventCB) {
@@ -737,6 +731,11 @@ var GhostText;
             ContentEditable.prototype.unbind = function () {
                 this.contentEditableElement.removeEventListener('focus', this.focusEventListener);
                 this.contentEditableElement.removeEventListener('input', this.inputEventListener);
+
+                if (this.browser === 1 /* Firefox */) {
+                    this.contentEditableElement.removeEventListener('DOMCharacterDataModified', this.inputEventListener);
+                }
+
                 window.removeEventListener('beforeunload', this.beforeUnloadListener);
                 this.removeHighlight();
             };
@@ -774,6 +773,10 @@ var GhostText;
             };
 
             ContentEditable.prototype.setText = function (text) {
+                if (this.contentEditableElement.innerHTML === text) {
+                    return;
+                }
+
                 this.contentEditableElement.innerHTML = text;
             };
 
