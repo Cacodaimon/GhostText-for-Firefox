@@ -47,7 +47,8 @@ var GhostTextBackground = {
         webSocket.onmessage = function(event) {
             self.postMessage({
                 tabId: message.tabId,
-                type: 'textChange',
+                type: 'text-change',
+                recipient: 'content',
                 change: event.data
             });
         };
@@ -55,7 +56,12 @@ var GhostTextBackground = {
         webSocket.onclose = function () {
             delete GhostTextBackground.webSockets[message.tabId.toString()];
 
-            //TODO send clode msg
+            self.postMessage({
+                tabId: message.tabId,
+                type: 'disable-field',
+                recipient: 'content',
+                change: event.data
+            });
         };
 
         GhostTextBackground.webSockets[message.tabId.toString()] = webSocket;
@@ -105,11 +111,11 @@ var GhostTextBackground = {
                     GhostTextBackground.connect(message);
                     break;
 
-                case 'disconnect':
+                case 'close-connection':
                     GhostTextBackground.disconnect(message);
                     break;
 
-                case 'textChange':
+                case 'text-change':
                     GhostTextBackground.textChange(message);
                     break;
 
