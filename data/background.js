@@ -48,7 +48,6 @@ var GhostTextBackground = {
             self.postMessage({
                 tabId: message.tabId,
                 type: 'text-change',
-                recipient: 'content',
                 change: event.data
             });
         };
@@ -58,9 +57,7 @@ var GhostTextBackground = {
 
             self.postMessage({
                 tabId: message.tabId,
-                type: 'disable-field',
-                recipient: 'content',
-                change: event.data
+                type: 'disable-field'
             });
         };
 
@@ -74,6 +71,11 @@ var GhostTextBackground = {
      */
     disconnect: function(message) {
         console.log('GhostTextBackground.disconnect');
+
+        self.postMessage({
+            tabId: message.tabId,
+            type: 'disable-field'
+        });
 
         try {
             GhostTextBackground.webSockets[message.tabId.toString()].close();
