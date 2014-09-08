@@ -214,6 +214,3 @@ var GhostTextContent = {
 };
 
 self.on('message', GhostTextContent.messageHandler);
-GhostTextContent.selectField();
-
-console.log('Injected');

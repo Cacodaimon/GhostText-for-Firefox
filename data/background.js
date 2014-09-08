@@ -1,4 +1,4 @@
-//'use strict';
+'use strict';
 
 /**
  * GhostText for FireFox background script.
@@ -106,7 +106,7 @@ var GhostTextBackground = {
         console.log('GhostTextBackground.init');
 
         self.on('message', function(message) {
-            console.log(message.type);
+            console.log('GhostTextBackground, on message: ' + JSON.stringify(message));
 
             switch (message.type) {
                 case 'connect':
