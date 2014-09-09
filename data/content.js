@@ -27,7 +27,7 @@ var GhostTextContent = {
         console.info('GhostText:', message);
         GThumane.remove();
 
-        message = message.replace(/\n/g,'<br>');
+        message = message.replace(/\n/g, '<br>');
         var timeout = stay ? 0 : GhostTextContent.getMessageDisplayTime(message);
         GThumane.log(message, {
             timeout: timeout,
@@ -39,7 +39,7 @@ var GhostTextContent = {
      * Displays the passed message to the user as an error
      *
      * @param  {string} message Message to display
-     * @param  {boolean} stay    Whether the message will stay on indefinitely
+     * @param  {boolean} stay Whether the message will stay on indefinitely
      * @private
      * @static
      */
@@ -47,13 +47,38 @@ var GhostTextContent = {
         console.warn('GhostText:', message);
         GThumane.remove();
 
-        message = message.replace(/\n/g,'<br>');
+        message = message.replace(/\n/g, '<br>');
         var timeout = stay ? 0 : GhostTextContent.getMessageDisplayTime(message);
         GThumane.log(message, {
             timeout: timeout,
             clickToClose: true,
             addnCls: 'ghost-text-message-error'
         });
+    },
+
+    /**
+     * Handles incoming errors from other parts of the add on.
+     *
+     * @param {{type: string, detail: string}} message The error message.
+     */
+    handleError: function (message) {
+        switch (message.detail) {
+            case 'server-not-found':
+                GhostTextContent.alertUser([
+                    'Connection error.',
+                    '\nMake sure that Sublime Text is open and has GhostText installed.',
+                    '\nTry closing and opening it and try again.',
+                    '\nMake sure that the port matches (4001 is the default).',
+                    '\nSee if there are any errors in Sublime Text\'s console.'
+                ].join());
+                break;
+            case 'version':
+                GhostTextContent.alertUser('Can\'t connect to this GhostText server, the client\'s protocol version is: 1');
+                break;
+
+            default:
+                GhostTextContent.alertUser('Unknown error: ' + message.detail);
+        }
     },
 
     /**
@@ -75,7 +100,7 @@ var GhostTextContent = {
      * @public
      * @static
      */
-    messageHandler: function(message) {
+    messageHandler: function (message) {
         console.log('Got message:', message);
 
         switch (message.type) {
@@ -92,7 +117,10 @@ var GhostTextContent = {
             case 'close-connection':
                 GhostTextContent.currentInputArea.unbind();
                 GhostTextContent.currentInputArea = null;
-                GhostTextContent.informUser('Disconnected! \n <a href="https://github.com/Cacodaimon/GhostTextForChrome/issues?state=open" target="_blank">Report issues</a> | <a href="https://chrome.google.com/webstore/detail/sublimetextarea/godiecgffnchndlihlpaajjcplehddca/reviews" target="_blank">Leave review</a>');
+                GhostTextContent.informUser('Disconnected! \n <a href="https://github.com/Cacodaimon/GhostText-for-Firefox/issues?state=open" target="_blank">Report issues</a>');
+                break;
+            case 'error':
+                GhostTextContent.handleError(message);
                 break;
             default:
                 console.warn(['Unknown message of type', message.type, 'given'].join(' '));
@@ -135,9 +163,9 @@ var GhostTextContent = {
 
         GhostTextContent.informUser('Connected! You can switch to your editor');
 
-        inputArea.textChangedEvent(function () { GhostTextContent.reportFieldData();});
-        inputArea.removeEvent(function () { alert('TODO remove evt'); });
-        inputArea.unloadEvent(function () { alert('TODO remove evt'); });
+        inputArea.textChangedEvent(GhostTextContent.reportFieldData);
+        inputArea.removeEvent(GhostTextContent.requestServerDisconnection);
+        inputArea.unloadEvent(GhostTextContent.requestServerDisconnection);
         inputArea.focusEvent(null); //disable
         inputArea.selectionChangedEvent(null);
 
@@ -147,8 +175,7 @@ var GhostTextContent = {
         self.postMessage({
             tabId: self.options.tab.id,
             change: JSON.stringify(textChange),
-            type: 'connect',
-            recipient: 'main'
+            type: 'connect'
         });
 
         GhostTextContent.reportFieldData(); //Report initial content of field
@@ -165,8 +192,7 @@ var GhostTextContent = {
 
         self.postMessage({
             tabId: self.options.tab.id,
-            type: 'close-connection',
-            recipient: 'background'
+            type: 'close-connection'
         });
     },
 
@@ -184,7 +210,7 @@ var GhostTextContent = {
 
         GhostTextContent.currentInputArea.unbind();
         GhostTextContent.currentInputArea = null;
-        GhostTextContent.informUser('Disconnected! \n <a href="https://github.com/Cacodaimon/GhostTextForChrome/issues?state=open" target="_blank">Report issues</a> | <a href="https://chrome.google.com/webstore/detail/sublimetextarea/godiecgffnchndlihlpaajjcplehddca/reviews" target="_blank">Leave review</a>');
+        GhostTextContent.informUser('Disconnected! \n <a href="https://github.com/Cacodaimon/GhostText-for-Firefox/issues?state=open" target="_blank">Report issues</a>');
     },
 
     /**
@@ -206,8 +232,7 @@ var GhostTextContent = {
         self.postMessage({
             tabId: self.options.tab.id,
             change: JSON.stringify(textChange),
-            type: 'text-change',
-            recipient: 'background'
+            type: 'text-change'
         });
     }
 
