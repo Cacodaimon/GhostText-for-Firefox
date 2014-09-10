@@ -2,7 +2,7 @@
   "name": "ghosttextforfirefox",
   "title": "GhostText For Firefox",
   "id": "jid1-mB8ue9LK4C1KMg",
-  "description": "Connects a text area to an editor with GhostText server installed.",
+  "description": "Connects a text area or js code editor to an editor with GhostText server installed.",
   "author": "Guido Krömer",
   "license": "MPL 2.0",
   "version": "0.1"

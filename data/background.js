@@ -57,6 +57,11 @@ var GhostTextBackground = {
         webSocket.onopen = function () {
             console.log('webSocket.onopen');
             webSocket.send(message.originMessage.change);
+
+            self.postMessage({
+                tabId: message.tabId,
+                type: 'connected'
+            });
         };
 
         webSocket.onmessage = function (event) {
@@ -113,8 +118,6 @@ var GhostTextBackground = {
     textChange: function (message) {
         console.log('GhostTextBackground.textChange');
 
-        console.log(message);
-        console.log(GhostTextBackground.webSockets[message.tabId.toString()]);
         GhostTextBackground.webSockets[message.tabId.toString()].send(message.change);
     },
 

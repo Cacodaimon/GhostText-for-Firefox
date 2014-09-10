@@ -70,7 +70,7 @@ var GhostTextContent = {
                     '\nTry closing and opening it and try again.',
                     '\nMake sure that the port matches (4001 is the default).',
                     '\nSee if there are any errors in Sublime Text\'s console.'
-                ].join());
+                ].join(''));
                 break;
             case 'version':
                 GhostTextContent.alertUser('Can\'t connect to this GhostText server, the client\'s protocol version is: 1');
