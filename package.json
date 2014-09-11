@@ -5,5 +5,12 @@
   "description": "Connects a text area or js code editor to an editor with GhostText server installed.",
   "author": "Guido Krömer",
   "license": "MPL 2.0",
-  "version": "0.1"
+  "version": "0.1",
+    "preferences": [{
+        "name": "port",
+        "title": "Server Port",
+        "description": "The GhostText Server's port",
+        "type": "integer",
+        "value": 4001
+    }]
 }
