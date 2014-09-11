@@ -101,6 +101,10 @@ var GhostTextBackground = {
             type: 'disable-field'
         });
 
+        if (!GhostTextBackground.webSockets[message.tabId.toString()]) {
+            return;
+        }
+
         try {
             GhostTextBackground.webSockets[message.tabId.toString()].close();
         } catch (e) {
