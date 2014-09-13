@@ -5,8 +5,6 @@
   -webkit-transition: 0.4s ease-in-out;
   transition:  0.4s ease-in-out;
   z-index: 2147483647;
-}
-.ghost-text-message {
   font-family: sans-serif;
   font-size: 16px;
   top: 0;

@@ -16,6 +16,19 @@ var GhostTextContent = {
     currentInputArea: null,
 
     /**
+     * Injects a css file to this tab.
+     *
+     * @param {string} href The resource's location.
+     */
+    injectCssFile: function (href) {
+        var link  = document.createElement('link');
+        link.type = 'text/css';
+        link.href = href;
+        link.rel  = 'stylesheet';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    },
+
+    /**
      * Displays the passed message to the user.
      *
      * @param  {string}  message Message to display
@@ -235,7 +248,7 @@ var GhostTextContent = {
             type: 'text-change'
         });
     }
-
 };
 
+GhostTextContent.injectCssFile(self.options.css);
 self.on('message', GhostTextContent.messageHandler);
