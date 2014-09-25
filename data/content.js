@@ -92,6 +92,10 @@ var GhostTextContent = {
             default:
                 GhostTextContent.alertUser('Unknown error: ' + message.detail);
         }
+
+        if (GhostTextContent.currentInputArea !== null) {
+            GhostTextContent.currentInputArea.unbind();
+        }
     },
 
     /**
