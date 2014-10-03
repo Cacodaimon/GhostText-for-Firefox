@@ -5,7 +5,8 @@
   "description": "Connects a text area or js code editor to an editor with GhostText server installed.",
   "author": "Guido Krömer",
   "license": "MPL 2.0",
-  "icon": "data/icon/icon_48.png",
+  "icon": "data/icon/48.png",
+  "icon64": "data/icon/64.png",
   "version": "0.1",
     "preferences": [{
         "name": "port",
