@@ -16,13 +16,27 @@ var GhostTextBackground = {
     webSockets: [],
 
     /**
+     * Switchable wrapper for the console log.
+     * If verbose is false nothing will be logged.
+     *
+     * @param {*} message
+     */
+    log: function(message) {
+        if (!self.options.verbose) {
+            return;
+        }
+
+        console.log(message)
+    },
+
+    /**
      * Post a message of type error to the target tab's content script.
      *
      * @param {string} tabId The target tab's id.
      * @param {string} detail The detail key.
      */
     postErrorMessage: function (tabId, detail) {
-        console.error(['Post error', detail, 'to tab', tabId, '!'].join(' '));
+        GhostTextBackground.log(['Post error', detail, 'to tab', tabId, '!'].join(' '));
 
         self.postMessage({
             tabId: tabId,
@@ -37,7 +51,7 @@ var GhostTextBackground = {
      * @param {*} message
      */
     connect: function (message) {
-        console.log('GhostTextBackground.connect ' + JSON.stringify(message));
+        GhostTextBackground.log('GhostTextBackground.connect ' + JSON.stringify(message));
 
         if (message.response.status !== 200) {
             GhostTextBackground.postErrorMessage(message.tabId, 'server-not-found');
@@ -55,7 +69,7 @@ var GhostTextBackground = {
         var webSocket = new WebSocket('ws://localhost:' + response.WebSocketPort);
 
         webSocket.onopen = function () {
-            console.log('webSocket.onopen');
+            GhostTextBackground.log('webSocket.onopen');
             webSocket.send(message.originMessage.change);
 
             self.postMessage({
@@ -94,7 +108,7 @@ var GhostTextBackground = {
      * @param message
      */
     disconnect: function (message) {
-        console.log('GhostTextBackground.disconnect');
+        GhostTextBackground.log('GhostTextBackground.disconnect');
 
         self.postMessage({
             tabId: message.tabId,
@@ -120,7 +134,7 @@ var GhostTextBackground = {
      * @param message
      */
     textChange: function (message) {
-        console.log('GhostTextBackground.textChange');
+        GhostTextBackground.log('GhostTextBackground.textChange');
 
         GhostTextBackground.webSockets[message.tabId.toString()].send(message.change);
     },
@@ -129,10 +143,10 @@ var GhostTextBackground = {
      * Init the on message handler, waiting for incoming messages from the main.js script.
      */
     init: function () {
-        console.log('GhostTextBackground.init');
+        GhostTextBackground.log('GhostTextBackground.init');
 
         self.on('message', function (message) {
-            console.log('GhostTextBackground, on message: ' + JSON.stringify(message));
+            GhostTextBackground.log('GhostTextBackground, on message: ' + JSON.stringify(message));
 
             switch (message.type) {
                 case 'connect':
@@ -148,7 +162,7 @@ var GhostTextBackground = {
                     break;
 
                 default:
-                    console.log(['Unknown message of type', message.type, 'given'].join(' '));
+                    GhostTextBackground.log(['Unknown message of type', message.type, 'given'].join(' '));
             }
         });
     }

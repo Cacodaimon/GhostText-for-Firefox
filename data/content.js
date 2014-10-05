@@ -16,6 +16,20 @@ var GhostTextContent = {
     currentInputArea: null,
 
     /**
+     * Switchable wrapper for the console log.
+     * If verbose is false nothing will be logged.
+     *
+     * @param {*} message
+     */
+    log: function(message) {
+        if (!self.options.verbose) {
+            return;
+        }
+
+        console.log(message)
+    },
+
+    /**
      * Injects a css file to this tab.
      *
      * @param {string} href The resource's location.
@@ -37,7 +51,7 @@ var GhostTextContent = {
      * @static
      */
     informUser: function (message, stay) {
-        console.info('GhostText:', message);
+        GhostTextContent.log('GhostText:', message);
         GThumane.remove();
 
         message = message.replace(/\n/g, '<br>');
@@ -57,7 +71,7 @@ var GhostTextContent = {
      * @static
      */
     alertUser: function (message, stay) {
-        console.warn('GhostText:', message);
+        GhostTextContent.log(['GhostText:', message]);
         GThumane.remove();
 
         message = message.replace(/\n/g, '<br>');
@@ -118,7 +132,7 @@ var GhostTextContent = {
      * @static
      */
     messageHandler: function (message) {
-        console.log('Got message:', message);
+        GhostTextContent.log(['Got message:', message]);
 
         switch (message.type) {
             case 'select-field':
@@ -130,6 +144,7 @@ var GhostTextContent = {
             case 'text-change':
                 var response = JSON.parse(message.change);
                 GhostTextContent.currentInputArea.setText(response.text);
+                GhostTextContent.currentInputArea.setSelections(GhostText.InputArea.Selections.fromPlainJS(response.selections));
                 break;
             case 'close-connection':
                 GhostTextContent.currentInputArea.unbind();
@@ -140,7 +155,7 @@ var GhostTextContent = {
                 GhostTextContent.handleError(message);
                 break;
             default:
-                console.warn(['Unknown message of type', message.type, 'given'].join(' '));
+                GhostTextContent.log(['Unknown message of type', message.type, 'given'].join(' '));
         }
     },
 
@@ -151,7 +166,7 @@ var GhostTextContent = {
      * @static
      */
     selectField: function () {
-        console.log('GhostText: selectField()');
+        GhostTextContent.log('GhostText: selectField()');
 
         var detector = new GhostText.InputArea.Detector(GhostText.InputArea.Browser.Firefox);
         detector.focusEvent(function (inputArea) {
@@ -174,7 +189,7 @@ var GhostTextContent = {
      * @static
      */
     enableField: function () {
-        console.log('GhostText: enableField()');
+        GhostTextContent.log('GhostText: enableField()');
 
         var inputArea = GhostTextContent.currentInputArea;
 
@@ -205,7 +220,7 @@ var GhostTextContent = {
      * @static
      */
     requestServerDisconnection: function () {
-        console.log('GhostText: requestServerDisconnection()');
+        GhostTextContent.log('GhostText: requestServerDisconnection()');
 
         self.postMessage({
             tabId: self.options.tab.id,
@@ -219,7 +234,7 @@ var GhostTextContent = {
      * @static
      */
     disableField: function () {
-        console.log('GhostText: disableField()');
+        GhostTextContent.log('GhostText: disableField()');
 
         if (GhostTextContent.currentInputArea === null) {
             return;
@@ -237,7 +252,7 @@ var GhostTextContent = {
      * @static
      */
     reportFieldData: function () {
-        console.log('GhostText: reportFieldData()');
+        GhostTextContent.log('GhostText: reportFieldData()');
 
         if (GhostTextContent.currentInputArea === null) {
             throw 'reportFieldData as been called without initializing currentInputArea!';
