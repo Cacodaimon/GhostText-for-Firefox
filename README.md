@@ -7,11 +7,15 @@ Use your text editor to write in Firefox (prototype add-on)
 * [GhostText for Sublime Text](https://github.com/Cacodaimon/GhostText-for-SublimeText) (more info about the project included)
 * [GhostText for Chrome](https://github.com/Cacodaimon/GhostText-for-Chrome)
 
-## Installation of the development version
+## Installation instructions
+
+### For Users
+
+GhostText for Firefox is available at [Add-ons for Firefox](https://addons.mozilla.org/en-US/firefox/addon/ghosttext-for-firefox/) 
 
 ### For testers
 
-1. Download the [GhostText-for-Firefox XPI](https://github.com/Cacodaimon/GhostText-for-Firefox/releases) 
+1. Download the latest [GhostText-for-Firefox XPI](https://github.com/Cacodaimon/GhostText-for-Firefox/releases) 
 2. Visit `about:addons` in Firefox
 3. Install the XPI manually by following the screen shots:
 ![Select the manual install mode](http://i.imgur.com/8X6uhiI.png)
