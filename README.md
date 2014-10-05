@@ -11,7 +11,7 @@ Use your text editor to write in Firefox (prototype add-on)
 
 ### For Users
 
-GhostText for Firefox is available at [Add-ons for Firefox](https://addons.mozilla.org/en-US/firefox/addon/ghosttext-for-firefox/) 
+GhostText for Firefox is available at [Add-ons for Firefox](https://addons.mozilla.org/en-US/firefox/addon/ghosttext-for-firefox/).
 
 ### For testers
 
