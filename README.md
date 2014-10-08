@@ -1,5 +1,5 @@
 # ![GhostText for Firefox](https://raw.githubusercontent.com/Cacodaimon/GhostText-for-Chrome/master/promo/gt_banner-for-firefox.png)
-Use your text editor to write in Firefox (prototype add-on)
+Use your text editor to write in Firefox
 
 
 ## Complementary repos
