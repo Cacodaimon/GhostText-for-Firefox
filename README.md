@@ -6,6 +6,7 @@ Use your text editor to write in Firefox
 
 * [GhostText for Sublime Text](https://github.com/Cacodaimon/GhostText-for-SublimeText) (more info about the project included)
 * [GhostText for Chrome](https://github.com/Cacodaimon/GhostText-for-Chrome)
+* [GhostText for Atom](https://github.com/Cacodaimon/GhostText-for-Atom) (prototype)
 
 ## Installation instructions
 
