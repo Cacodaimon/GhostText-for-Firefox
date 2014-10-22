@@ -160,7 +160,7 @@ var GhostTextContent = {
     },
 
     /**
-     * Look for text areas in document and connect to is as soon as possible.
+     * Look for text areas in document and connect to it as soon as possible.
      *
      * @private
      * @static
