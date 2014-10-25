@@ -152,6 +152,7 @@ var GhostTextContent = {
                 GhostTextContent.informUser('Disconnected! \n <a href="https://github.com/Cacodaimon/GhostText-for-Firefox/issues?state=open" target="_blank">Report issues</a>');
                 break;
             case 'connected':
+                GhostTextContent.reportFieldData(); //Report initial content of field
                 GhostTextContent.informUser('Connected! You can switch to your editor');
                 break;
             case 'error':
@@ -210,8 +211,6 @@ var GhostTextContent = {
             change: JSON.stringify(textChange),
             type: 'connect'
         });
-
-        GhostTextContent.reportFieldData(); //Report initial content of field
     },
 
     /**
