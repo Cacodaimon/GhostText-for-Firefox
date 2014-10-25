@@ -151,6 +151,9 @@ var GhostTextContent = {
                 GhostTextContent.currentInputArea = null;
                 GhostTextContent.informUser('Disconnected! \n <a href="https://github.com/Cacodaimon/GhostText-for-Firefox/issues?state=open" target="_blank">Report issues</a>');
                 break;
+            case 'connected':
+                GhostTextContent.informUser('Connected! You can switch to your editor');
+                break;
             case 'error':
                 GhostTextContent.handleError(message);
                 break;
@@ -192,8 +195,6 @@ var GhostTextContent = {
         GhostTextContent.log('GhostText: enableField()');
 
         var inputArea = GhostTextContent.currentInputArea;
-
-        GhostTextContent.informUser('Connected! You can switch to your editor');
 
         inputArea.textChangedEvent(GhostTextContent.reportFieldData);
         inputArea.removeEvent(GhostTextContent.requestServerDisconnection);
