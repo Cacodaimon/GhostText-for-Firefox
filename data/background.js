@@ -70,7 +70,6 @@ var GhostTextBackground = {
 
         webSocket.onopen = function () {
             GhostTextBackground.log('webSocket.onopen');
-            webSocket.send(message.originMessage.change);
 
             self.postMessage({
                 tabId: message.tabId,
