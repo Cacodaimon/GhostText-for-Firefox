@@ -30,3 +30,8 @@ GhostText for Firefox is available at [Add-ons for Firefox](https://addons.mozil
 3. Navigate to the Add-on SDK folder and run `source bin/activate`
 4. Navigate the folder where you cloned GhostText-for-Firefox, `cd GhostText-For-Firefox/` for example.
 5. Execute the following command: `cfx run`
+
+
+## Learn more
+
+* [Article about the add-on internals](http://cacodaemon.de/index.php?id=64)
