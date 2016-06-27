@@ -1,7 +1,5 @@
-# ![GhostText for Firefox](https://raw.githubusercontent.com/GhostText/GhostText/master/promo/gt_banner-for-firefox.png)
+# [![GhostText for Firefox](https://raw.githubusercontent.com/GhostText/GhostText/master/promo/gt_banner-for-firefox.png)](https://github.com/GhostText/GhostText)
 
-# Repo moved
+## Repo moved to [GhostText/GhostText](https://github.com/GhostText/GhostText)
 
-* Main repo: https://github.com/GhostText/GhostText
-* Firefox folder: https://github.com/GhostText/GhostText/tree/master/firefox
-* Open an issue: https://github.com/GhostText/GhostText/issues/new?labels=firefox
+Open an issue: [https://github.com/GhostText/GhostText/issues/firefox](https://github.com/GhostText/GhostText/issues?q=is%3Aissue+is%3Aopen+label%3Afirefox)
